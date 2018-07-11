@@ -10,7 +10,7 @@ pipeline {
             stage('Clean') {
                 steps {
                 dir('edge') {
-                    bat "mvn clean"
+                    sh "mvn clean"
                 }
             }
         }
@@ -18,7 +18,7 @@ pipeline {
             
                 steps {
                     dir('edge') {
-                    bat "mvn test -Pproxy-unit-test "
+                    sh "mvn test -Pproxy-unit-test "
                 }
             }
         }
@@ -27,7 +27,7 @@ pipeline {
                 steps {
                     dir('edge') {
                     println "Predeployment of Caches "
-                    bat "mvn apigee-config:caches " +
+                    sh "mvn apigee-config:caches " +
                             "    -Papigee -Denv=${params.apigee_env} -Dorg=${params.apigee_org} " +
                             "    -Dusername=${params.apigee_user} " +
                             "    -Dpassword=${params.apigee_pwd}"
@@ -40,7 +40,7 @@ pipeline {
                 steps {
                     dir('edge') {
                     println "Predeployment of targetservers "
-                    bat "mvn apigee-config:targetservers " +
+                    sh "mvn apigee-config:targetservers " +
                             "    -Papigee -Denv=${params.apigee_env} -Dorg=${params.apigee_org} " +
                             "    -Dusername=${params.apigee_user} " +
                             "    -Dpassword=${params.apigee_pwd}"
@@ -53,7 +53,7 @@ pipeline {
                 steps {
                     dir('edge') {
                     println "Predeployment of keyvaluemaps  "
-                    bat "mvn apigee-config:keyvaluemaps " +
+                    sh "mvn apigee-config:keyvaluemaps " +
                             "    -Papigee -Denv=${params.apigee_env} -Dorg=${params.apigee_org} " +
                             "    -Dusername=${params.apigee_user} " +
                             "    -Dpassword=${params.apigee_pwd}"
@@ -65,7 +65,7 @@ pipeline {
             stage('Build proxy bundle') {
                 steps {
                     dir('edge') {
-                    bat "mvn package -Papigee -Denv=${params.apigee_env} -Dorg=${params.apigee_org}"
+                    sh "mvn package -Papigee -Denv=${params.apigee_env} -Dorg=${params.apigee_org}"
 
                 }
             }
@@ -74,7 +74,7 @@ pipeline {
             stage('Deploy proxy bundle') {
                 steps {
                     dir('edge') {
-                    bat "mvn apigee-enterprise:deploy -Papigee -Denv=${params.apigee_env} -Dorg=${params.apigee_org} -Dusername=${params.apigee_user} -Dpassword=${params.apigee_pwd}"
+                    sh "mvn apigee-enterprise:deploy -Papigee -Denv=${params.apigee_env} -Dorg=${params.apigee_org} -Dusername=${params.apigee_user} -Dpassword=${params.apigee_pwd}"
                 }
             }
         }
@@ -94,7 +94,7 @@ pipeline {
             stage('Functional Test') {
                 steps {
                     dir('edge') {
-                    sh "node ./node_modules/cucumber/bin/cucumber.js target/test/integration/features --format json:target/reports.json"
+                    sh "node ./node_modules/cucumber/bin/cucumber-js target/test/integration/features --format json:target/reports.json"
                 }
             }
         }
